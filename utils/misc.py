@@ -89,7 +89,7 @@ def process_config(config_path):
     with open(config_path) as f_in:
         d = json.load(f_in)
         if "dataloader" not in d.keys():
-            d["dataloader"] = "cv2dataloader"
+            d["dataloader"] = "kpdataloader"
         if "use_rgb_base" not in d.keys():
             d["use_rgb_base"] = True
         if "select" not in d.keys():
