@@ -1,0 +1,15 @@
+name: dl3
+dependencies:
+ - matplotlib
+ - pandas
+ - numpy
+ - nb_conda_kernels
+ - pip
+ - cudatoolkit==9.2
+ - pytorch::pytorch=1.3=*cuda9.2*
+ - tqdm
+ - scipy
+ - scikit-image
+ - scikit-learn
+ - opencv
+ - torchvision
