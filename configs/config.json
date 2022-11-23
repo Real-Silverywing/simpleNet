@@ -20,6 +20,6 @@
     "fp16": false,
     "cosine_annealing": false,
     "num_workers": 1,
-//    "labels_path": "global54",
+    "dataloader":"kpdataloader",
     "desc": "tempspatattnnet net with global54"
 }
