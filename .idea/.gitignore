@@ -1,3 +1,13 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+
+# folders
+/data
+
+# slurm log file
+*.out
+
+# dataloader cache
+*.pyc
+
