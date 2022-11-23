@@ -27,10 +27,10 @@ import torch.utils.data as data
 from torch.utils.data.sampler import SubsetRandomSampler
 
 # from torchvision.transforms import *
-from utils.torch_videovision.videotransforms import (
-    video_transforms,
-    volume_transforms,
-)
+# from utils.torch_videovision.videotransforms import (
+#     video_transforms,
+#     volume_transforms,
+# )
 from .cv2dataloader import prepare_split
 
 # from gulpio import GulpDirectory
@@ -50,7 +50,7 @@ error_vid_frame = {
 # trajectory_path = "/scratch/groups/svedula3/data/cataract/rhexis_tool_features/"
 
 gulp_videos_path = "./data/gulped_rhexis/"
-folds_txt_path = "./data/folds4/{}/"
+folds_txt_path = "./data/April2019/folds4/"
 folds_txt_path_dum = "./data/dum_folds/"
 trajectory_path = "./data/rhexis_tool_features/"
 

@@ -4,17 +4,15 @@ import albumentations as A
 from utils.kpdataloader import KeyPointDataset
 from albumentations.pytorch import ToTensorV2
 from utils.cv2dataloader import VideoFolder
-from utils.torch_videovision.videotransforms import video_transforms, volume_transforms
-from cv2dataloader import get_data_loaders
-from segment_dataloader import get_data_loaders as get_segment_dataloaders
-from kpdataloader import get_data_loaders as get_kpdataloaders
-from feature_dataloader import get_data_loaders as get_featdataloaders
-from mixed_dataloader import get_data_loaders as get_mixeddataloaders
-from preprocessed_dataloader import (
-    get_data_loaders as get_processed_data_loaders,
-)
+# from utils.torch_videovision.videotransforms import video_transforms, volume_transforms
+from utils.cv2dataloader import get_data_loaders
+# from utils.segment_dataloader import get_data_loaders as get_segment_dataloaders
+from utils.kpdataloader import get_data_loaders as get_kpdataloaders
+# from feature_dataloader import get_data_loaders as get_featdataloaders
+# from mixed_dataloader import get_data_loaders as get_mixeddataloaders
+# from preprocessed_dataloader import get_data_loaders as get_processed_data_loaders
 
-def get_ky_dataloaders_from_config(config, TEST_CSV_PATH, num_folds=5):
+def get_ky_dataloaders_from_config(config, TEST_CSV_PATH, num_folds=4):
     temp = pd.read_csv(TEST_CSV_PATH, header=0)
     test_labels = temp['Label'].tolist()
     temp = temp['Dir'].str.split(" ", n = 1, expand = True)
