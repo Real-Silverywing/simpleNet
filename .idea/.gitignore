@@ -3,7 +3,8 @@
 /workspace.xml
 
 # folders
-/data
+/data/
+/model_weights/
 
 # slurm log file
 *.out
@@ -11,3 +12,7 @@
 # dataloader cache
 *.pyc
 
+# all img
+*.png
+*.jpg
+*.jpeg
