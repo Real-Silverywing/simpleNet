@@ -38,7 +38,8 @@ def generate_preds(config, net, test_loader, test=False, folds=5, termout=False,
                     seq_lengths = data[3]
                     label_vpreds = net(valid_imgs,seq_lengths)
                 else:
-                    label_vpreds = net(valid_imgs, out_logits=(not config.weighted_bce))
+                    # label_vpreds = net(valid_imgs, out_logits=(not config.weighted_bce))
+                    label_vpreds = net(valid_imgs)
                 if traj:
                     label_vpreds = label_vpreds[0]
                 elif hasattr(config, "attention_loss") and config.attention_loss:

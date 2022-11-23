@@ -36,7 +36,7 @@ from utils.model_eval_utils import generate_preds, save_preds
 
 parser = argparse.ArgumentParser(description="Atlas Protein")
 parser.add_argument(
-    "--config", default="./configs/config.json", help="run configuration"
+    "--config", default="/projects/colonoscopy/group_scratch/xzhou86/simpleNet/configs/config.json", help="run configuration"
 )
 parser.add_argument(
     "--dev_mode",

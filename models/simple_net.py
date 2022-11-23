@@ -18,8 +18,10 @@ class SimpleNet(nn.Module):
         #     p.requires_grad = True
 
         # Pooling
-        self.low_avgpool = nn.AvgPool2d(8)
-        self.low_maxpool = nn.MaxPool2d(8)
+        # self.low_avgpool = nn.AvgPool2d(8)
+        # self.low_maxpool = nn.MaxPool2d(8)
+        self.low_avgpool = nn.AvgPool2d(7)
+        self.low_maxpool = nn.MaxPool2d(7)
 
         # Temporal aggregation
         self.lstm = nn.LSTM(input_size=2048, hidden_size=256, batch_first=True)
@@ -28,7 +30,8 @@ class SimpleNet(nn.Module):
 
 
     def forward(self, X):
-        X = X[0,...].permute(1, 0, 2, 3) # framesx3xhxw
+        # X = X[0,...].permute(1, 0, 2, 3) 
+        X = X[0,...]    # framesx3xhxw
         X = self.rgb_base(X) # framesx2048x8x8
 
         X = self.low_avgpool(X)     # framesx2048x1x1

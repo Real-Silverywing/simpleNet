@@ -132,7 +132,7 @@ class KeyPointDataset(data.Dataset):
         # print("DEBUG: number of videos: ", self.num_videos)
         for i in range(self.num_videos):
             path = self.csv_data.loc[i, 0]
-            num_frames = len(glob.glob(path + "*.jpg"))
+            num_frames = len(glob.glob(path + "*.png"))
             print("num_frames: " + str(num_frames) + " in vid: " + str(path))
             self.num_frames_array.append(num_frames)
 
@@ -476,7 +476,14 @@ class KeyPointDataset(data.Dataset):
             #         frames, meta = self.gulp_directory[item.id, slice_object]
             for img_idx in clip_indices:
                 try:
-                    fpath = f"{item_path}{img_idx}.jpg"  # Assuming no consecutive error imgs.
+                    # for filenames are pure numbers
+                    # fpath = f"{item_path}{img_idx}.jpg"  # Assuming no consecutive error imgs.
+
+                    # for filenames are vid_name + frames
+                    item_name = item_path.split('/')[-2] # get video name, i.e. vid_182c_trim
+                    zidx = str(img_idx).zfill(4)    # pads string on the left with zeros, since frames between 0001 and 9999
+                    img_name = item_name + '_' + str(zidx)
+                    fpath = f"{item_path}{img_name}.png"
                     if (
                         item_path in error_vid_frame.keys()
                         and (img_idx) in error_vid_frame[item_path]
@@ -496,7 +503,13 @@ class KeyPointDataset(data.Dataset):
                         )
                     )
                     correct_idx = img_idx-1 if img_idx>0 else img_idx+1
-                    fpath = f"{item_path}{correct_idx}.jpg"  # Assuming no consecutive error imgs.
+                    # get fpath
+                    # fpath = f"{item_path}{correct_idx}.jpg"  # Assuming no consecutive error imgs.
+                    item_name = item_path.split('/')[-2] # get video name, i.e. vid_182c_trim
+                    zidx = str(img_idx).zfill(4)    # pads string on the left with zeros, since frames between 0001 and 9999
+                    img_name = item_name + '_' + str(zidx)
+                    fpath = f"{item_path}{img_name}.png"
+
                     frame = cv2.cvtColor(cv2.imread(fpath), cv2.COLOR_BGR2RGB)
                 frames.append(frame)
             if len(frames) < (self.clip_size):
