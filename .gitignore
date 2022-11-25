@@ -12,3 +12,9 @@
 *.png
 *.jpg
 *.jpeg
+
+# log file
+*.log
+
+# slurm file
+.src
