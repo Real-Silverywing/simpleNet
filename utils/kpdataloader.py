@@ -443,7 +443,8 @@ class KeyPointDataset(data.Dataset):
             num_frames_necessary = self.clip_size * self.nclips * self.step_size
         else:
             num_frames_necessary = num_frames
-        offset = 0
+        # offset = 0
+        offset = 1
 
         if test_pos >= 0:
             offset = test_pos * self.clip_size * self.step_size // 2
@@ -462,7 +463,8 @@ class KeyPointDataset(data.Dataset):
                 #     offset = np.random.randint(0, diff)
 
                 # offset = np.random.randint(0, diff)
-                offset = torch.randint(0, diff, (1,)).item()  # add seed
+                # offset = torch.randint(0, diff, (1,)).item()  # add seed
+                offset = torch.randint(1, diff, (1,)).item()  # start from 1 to diff-1
                 # print("Kpdataloader, {} offset: {}".format(item_path, offset))
 
             slice_object = slice(
@@ -481,9 +483,12 @@ class KeyPointDataset(data.Dataset):
 
                     # for filenames are vid_name + frames
                     item_name = item_path.split('/')[-2] # get video name, i.e. vid_182c_trim
+
                     zidx = str(img_idx).zfill(4)    # pads string on the left with zeros, since frames between 0001 and 9999
                     img_name = item_name + '_' + str(zidx)
                     fpath = f"{item_path}{img_name}.png"
+                    
+                    # print(fpath)
                     if (
                         item_path in error_vid_frame.keys()
                         and (img_idx) in error_vid_frame[item_path]
@@ -502,7 +507,7 @@ class KeyPointDataset(data.Dataset):
                             (img_idx in error_vid_frame[item_path]),
                         )
                     )
-                    correct_idx = img_idx-1 if img_idx>0 else img_idx+1
+                    correct_idx = img_idx-1 if img_idx>2 else img_idx+1
                     # get fpath
                     # fpath = f"{item_path}{correct_idx}.jpg"  # Assuming no consecutive error imgs.
                     item_name = item_path.split('/')[-2] # get video name, i.e. vid_182c_trim

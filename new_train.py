@@ -173,7 +173,7 @@ def train(net, optimizer, loss, train_loader, freeze_bn=False):
     t0 = time.time()
     ll = len(train_loader)
     # loop over the images for the desired amount
-    print("length train_loader" + str(ll))
+    print("length train_loader: " + str(ll))
     retain_graph = True
     count = 0
 
@@ -346,7 +346,8 @@ def valid(net, optimizer, loss, valid_loader, save_imgs=False, fold_num=0):
                 labels_one_hot[i, val_labels[i].long()] = 1
             epoch_vloss = loss(val_preds, labels_one_hot)
 
-    # print(val_preds, val_labels)
+    print("preds    lables")
+    print(val_preds, val_labels)
     if config.num_classes == 1:
         epoch_vacc = accuracy(val_preds.numpy() > 0.5, val_labels.numpy())
     else:
