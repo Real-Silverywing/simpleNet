@@ -1,6 +1,6 @@
 {   
     "exp_name": "colonoscopy_full",
-    "model_name": "simplenet",
+    "model_name": "simplenet_cnn",
     "num_classes": 1,
     "trajectory": false,
     "lr": 1e-3,
@@ -11,7 +11,7 @@
     "es_patience":20,
     "drop_rate": 0,
     "batch_size": 1,
-    "epochs": 500,
+    "epochs": 200,
     "imsize": 256,
     "clip_size": 256,
     "nclips": 1,

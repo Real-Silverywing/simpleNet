@@ -1,6 +1,6 @@
 # from models.testnet import SATestNet
 # from models.mix_attn_net import MixAttnNet
-from models.simple_net import SimpleNet
+from models.simple_net import SimpleNet, SimpleNet_cnn
 # from models.simple_attn_net import SimpleAttnNet
 # from models.temporal_attn_net import TempAttnNet
 # from models.temporal_spatial_attn_net import SpatTempAttnNet
@@ -22,6 +22,9 @@ from models.simple_net import SimpleNet
 
 def simplenet(config, drop_rate=0):
     return SimpleNet(num_classes=1, drop_rate=drop_rate)
+
+def simplenet_cnn(config, drop_rate=0):
+    return SimpleNet_cnn(num_classes=1, drop_rate=drop_rate)
 
 
 # def simpleattnnet(config, drop_rate=0):
