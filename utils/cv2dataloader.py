@@ -22,7 +22,7 @@ import torch
 import torch.utils.data as data
 from torch.utils.data.sampler import SubsetRandomSampler
 # from torchvision.transforms import *
-# from utils.torch_videovision.videotransforms import video_transforms, volume_transforms
+from utils.torch_videovision.videotransforms import video_transforms, volume_transforms
 
 # from gulpio import GulpDirectory
 # from .gulp_data_parser import GulpDataset
@@ -132,38 +132,63 @@ class VideoFolder(data.Dataset):
         target_idx = torch.from_numpy(np.array(int(item_label))).float()
 
         if self.nclips > -1:
-            num_frames_necessary = self.clip_size * self.nclips * self.step_size
+            num_frames_necessary = self.clip_size * self.nclips
+            # num_frames_necessary = self.clip_size * self.nclips * self.step_size
         else:
             num_frames_necessary = num_frames
-        offset = 0
-        if num_frames_necessary < num_frames:
-            # If there are more frames, then sample starting offset.
-            diff = (num_frames - num_frames_necessary)
-            # temporal augmentation
-            # if not self.is_val:
-            #     offset = np.random.randint(0, diff)
+        offset = 1
 
-            offset = np.random.randint(0, diff)
-            # offset = 10
 
-        if test_pos >= 0:
-            offset = test_pos * self.clip_size * self.step_size // 2
-            if offset > num_frames:
-                return None
-            print(offset)
+        # old method
+        # if num_frames_necessary < num_frames:
+        #     # If there are more frames, then sample starting offset.
+        #     diff = (num_frames - num_frames_necessary)
+        #     # temporal augmentation
+        #     # if not self.is_val:
+        #     #     offset = np.random.randint(0, diff)
 
-        slice_object = slice(
-            offset, num_frames_necessary + offset, self.step_size)
+        #     offset = np.random.randint(0, diff)
+        #     # offset = 10
+
+        # if test_pos >= 0:
+        #     offset = test_pos * self.clip_size * self.step_size // 2
+        #     if offset > num_frames:
+        #         return None
+        #     print(offset)
+
+        # slice_object = slice(
+        #     offset, num_frames_necessary + offset, self.step_size)
         
-        indices = np.arange(num_frames)[slice_object]
+        # indices = np.arange(num_frames)[slice_object]
 
-#         frames, meta = self.gulp_directory[item.id, slice_object]
+
+
+
+        # divid into 8 part, get 32 frames inside of each part
+        indices = []
+        if num_frames_necessary < num_frames:
+            # Divide whole video in to num_parts parts.
+            num_parts = 8
+            
+            frames_per_part = int(self.clip_size /  num_parts)# 32
+            assert (self.clip_size % num_parts) == 0,'num_parts * frames_per_part shold equals to clip_size'
+            
+            for i in range(num_parts):
+                start = np.floor(i / num_parts * num_frames).astype(int) + 1 # avoid 0000.png
+                end = np.floor((i + 1) / num_parts * num_frames).astype(int) + 1 # avoid 0000.png
+                random_select = np.sort(np.random.randint(start,end,frames_per_part)) # np.random.randint, low inclusive, high exclusicve
+                indices.append(random_select)
+            indices_flat = np.array((indices)).flatten()
         frames = []
-        for ind in indices:
-            fpath = f"{item_path}{ind}.jpg"
+        for img_idx in indices_flat:
+            item_name = item_path.split('/')[-2]
+            zidx = str(img_idx).zfill(4)
+            img_name = item_name + '_' + str(zidx)
+            fpath = f"{item_path}{img_name}.png"
             assert os.path.exists(fpath), fpath
-            frames.append(cv2.imread(fpath))
-#         print(len(frames))
+            frame = cv2.cvtColor(cv2.imread(fpath), cv2.COLOR_BGR2RGB)
+            frames.append(frame)
+        # print("DEBUG:  {} frames had been loaded with cv2dataloader".format(len(frames)))
 #         print(frames[0].shape)
 #         print(frames.shape, frames.dtype)
 #         assert 0 == 1

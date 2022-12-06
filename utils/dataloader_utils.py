@@ -8,6 +8,7 @@ from utils.cv2dataloader import VideoFolder
 from utils.cv2dataloader import get_data_loaders
 # from utils.segment_dataloader import get_data_loaders as get_segment_dataloaders
 from utils.kpdataloader import get_data_loaders as get_kpdataloaders
+from utils.cat_kpdataloader import get_data_loaders as get_cat_kpdataloaders
 # from feature_dataloader import get_data_loaders as get_featdataloaders
 # from mixed_dataloader import get_data_loaders as get_mixeddataloaders
 # from preprocessed_dataloader import get_data_loaders as get_processed_data_loaders
@@ -122,6 +123,21 @@ def get_dataloaders_from_config(config, val_fold, test_fold, dum=False, num_fold
     elif config.dataloader == "kpdataloader":
         print("DEBUG: getting kpdataloader")
         train_loader, valid_loader, test_loader = get_kpdataloaders(
+            config=config,
+            val_fold=val_fold,
+            test_fold=test_fold,
+            imsize=config.imsize,
+            batch_size=config.batch_size,
+            clip_size=config.clip_size,
+            nclips=config.nclips,
+            step_size=config.step_size,
+            num_workers=config.num_workers,
+            dum=dum,
+            num_folds=num_folds,
+        )
+    elif config.dataloader == "cat_kpdataloader":
+        print("DEBUG: getting kpdataloader")
+        train_loader, valid_loader, test_loader = get_cat_kpdataloaders(
             config=config,
             val_fold=val_fold,
             test_fold=test_fold,
