@@ -39,6 +39,7 @@ folds_txt_path = "./data/April2019/folds4/"
 folds_txt_path_dum = "./data/dum_folds/"
 trajectory_path = "./data/rhexis_tool_features/"
 
+np.random.seed(3407)
 
 def prepare_split(config, labels_path=None, val_fold=3, test_fold=4, num_folds=4):
     if not labels_path:
@@ -71,7 +72,7 @@ def prepare_split(config, labels_path=None, val_fold=3, test_fold=4, num_folds=4
     test_ids = temp[0].tolist()
 
     train_df = pd.DataFrame({0: train_ids, 1: train_labels})
-    print(train_df)
+    # print(train_df)
     valid_df = pd.DataFrame({0: valid_ids, 1: valid_labels})
     test_df = pd.DataFrame({0: test_ids, 1: test_labels})
         
@@ -117,7 +118,7 @@ class VideoFolder(data.Dataset):
         for i in range(self.num_videos):
             path = self.csv_data.loc[i, 0]
             num_frames = len(glob.glob(path + "*.png"))
-            print("num_frames: " + str(num_frames) + " in vid: " + str(path))
+            # print("num_frames: " + str(num_frames) + " in vid: " + str(path))
             self.num_frames_array.append(num_frames)
 
     def __getitem__(self, index, test_pos=-1):
@@ -175,8 +176,8 @@ class VideoFolder(data.Dataset):
             
             for i in range(num_parts):
                 start = np.floor(i / num_parts * num_frames).astype(int) + 1 # avoid 0000.png
-                end = np.floor((i + 1) / num_parts * num_frames).astype(int) + 1 # avoid 0000.png
-                random_select = np.sort(np.random.randint(start,end,frames_per_part)) # np.random.randint, low inclusive, high exclusicve
+                end = np.floor((i + 1) / num_parts * num_frames).astype(int) + 1 
+                random_select = np.sort(np.random.choice(range(start,end),frames_per_part, replace = False)) # np.random.choice, start inclusive, end exclusicve; non-repitive
                 indices.append(random_select)
             indices_flat = np.array((indices)).flatten()
         frames = []

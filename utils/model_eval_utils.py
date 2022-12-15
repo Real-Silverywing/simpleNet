@@ -15,12 +15,13 @@ from .cv2dataloader import prepare_split
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-def generate_preds(config, net, test_loader, test=False, folds=5, termout=False, traj=False):
+def generate_preds(config, net, test_loader, test=False, folds=4, termout=False, traj=False):
     net.eval() 
     
     if not test:
         val_labels = torch.zeros(len(test_loader.dataset), 1)
     val_preds = torch.zeros(len(test_loader.dataset), config.num_classes).to(device)
+
 
     t0 = time.time()
     ll = len(test_loader)
@@ -72,7 +73,7 @@ def save_preds(config, net, test_loader, TEST_CSV_PATH, val_fold, test_fold, TTA
                     TK=True, traj=False, ky=False):
     print('Generating predictions...')
 
-    SUBM_OUT = "./subm/{}/new_{}_val{}_test{}.csv".format(config.exp_name, config.model_name, 
+    SUBM_OUT = "./subm/{}/{}_val{}_test{}.csv".format(config.exp_name, config.model_name, 
 str(val_fold), str(test_fold))
     print(SUBM_OUT)
     net.eval()
@@ -86,12 +87,16 @@ str(val_fold), str(test_fold))
         test_preds = generate_preds(config, net, test_loader, test=True, folds=TTA_folds, 
                                     termout=termout, traj=traj).numpy()
 
+
     if gen_csv:
         if not ky:
             print('Saving predictions...')
-            preds_df = pd.DataFrame(data=test_preds)
+            preds_df = pd.DataFrame(data=test_preds,columns=['Preds'])
             preds_df['th'] = pd.Series(best_th)
-            preds_df.to_csv(SUBM_OUT.replace('subm', 'preds'), index=False)
+            preds_df.to_csv(SUBM_OUT.replace('subm', 'preds'), index=False) # save to ./preds
+
+
+
 
             _, _, test_df = prepare_split(config=config, val_fold=val_fold, test_fold=test_fold)
             test_df[1] = (test_preds>best_th).astype('int')
