@@ -23,7 +23,7 @@ from models.simple_net import SimpleNet, SimpleNet_resnet18
 def simplenet(config, drop_rate=0):
     return SimpleNet(num_classes=1, drop_rate=drop_rate)
 
-def simplenet_resnt18(config, drop_rate = 0):
+def simplenet_resnet18(config, drop_rate = 0):
     return SimpleNet_resnet18(num_classes=1, drop_rate=drop_rate)
 
 

@@ -38,7 +38,7 @@ from utils.torch_videovision.videotransforms import video_transforms, volume_tra
 
 
 parser = argparse.ArgumentParser(description='Atlas Protein')
-parser.add_argument('--config', type = str,
+parser.add_argument('--config', type = str, default = "/projects/colonoscopy/group_scratch/xzhou86/simpleNet/configs/config.json",
                     help="run configuration")
 parser.add_argument('--dum', action='store_true', default=False,
                     help='train on the dum folds')
@@ -48,9 +48,9 @@ parser.add_argument('--latest', action='store_true', default=False,
                     help='Load the latest checkpoint (default best)')
 parser.add_argument('-p', '--print', action='store_true', default=False,
                     help='Print real time status')
-parser.add_argument('--split', type=int, choices=range(-1, 20), default=-1, 
-                    help='Which split to train on (0-19)')
-parser.add_argument("--num_folds", default=5, help="Total number of folds")
+parser.add_argument('--split', type=int, choices=range(-1, 12), default=1, 
+                    help='Which split to train on (0-11)')
+parser.add_argument("--num_folds", default=4, help="Total number of folds")
 args = parser.parse_args()
 
 config = process_config(args.config)
@@ -68,6 +68,8 @@ if not os.path.exists('./logs/'+config.exp_name):
     os.makedirs('./logs/'+config.exp_name) 
 if not os.path.exists('./preds/'+config.exp_name):
     os.makedirs('./preds/'+config.exp_name) 
+if not os.path.exists('./preds+labels/'+config.exp_name):
+    os.makedirs('./preds+labels/'+config.exp_name) 
 if not os.path.exists('./subm/'+config.exp_name):
     os.makedirs('./subm/'+config.exp_name) 
 
@@ -76,7 +78,10 @@ test_csv_path = "./data/new_all_labels.csv"  # Made using prepare_test_set.py
 # resume training
 def load_checkpoint(model, model_ckpt):
     # Note: Input model should be pre-defined.  This routine only updates its state.
-
+    # # testing
+    # ckpt_name = model_ckpt.split('/')[-1]
+    # model_weights_path = '/projects/colonoscopy/group_scratch/xzhou86/simpleNet/model_weights/'
+    # model_ckpt = model_weights_path + ckpt_name
     checkpoint = torch.load(model_ckpt, map_location = device)
     model.load_state_dict(checkpoint['state_dict'])
     print("Loaded checkpoint '{}' (epoch {})"
@@ -85,6 +90,26 @@ def load_checkpoint(model, model_ckpt):
     model = model.to(device)
     model.eval()
     return model
+
+def preds_w_lables(config, val_fold=4, test_fold=5):
+    labels_path = "./data/April2019/folds4/"
+    pred_out = "./preds/{}/{}_val{}_test{}.csv".format(config.exp_name, 
+                   config.model_name, str(val_fold), str(test_fold))
+    pwl_out = "./preds+labels/{}/{}_val{}_test{}.csv".format(config.exp_name, 
+                   config.model_name, str(val_fold), str(test_fold))
+    temp = pd.read_csv(labels_path + 'fold_{}.txt'.format(test_fold), header=0)
+    labels = temp['Label'].tolist()
+    temp = pd.read_csv(pred_out, header=0)
+    preds = temp['Preds'].tolist()
+    data = []
+    for p,l in zip(preds, labels):
+        data.append([p,l])
+    df = pd.DataFrame(data=data,columns=['Preds','Labels'])
+    df.to_csv(pwl_out, index=False) # save to ./preds
+    print('predictions and Labels saved...')
+
+
+
 
 def test_network(config, net, model_ckpt, fold=0, val_fold=4, test_fold=5, best_th=0.5, TEST_CSV_PATH = 
 test_csv_path):
@@ -110,6 +135,7 @@ test_csv_path):
     save_preds(config, net, test_loader, TEST_CSV_PATH, val_fold, test_fold, 
                     TTA_folds, best_th,
                     termout=args.print, TK=args.TK, traj=config.trajectory)
+    # preds_w_lables(config, val_fold, test_fold)
 
 def main_test(config, val_fold, test_fold):
 
@@ -130,7 +156,8 @@ def main_test(config, val_fold, test_fold):
     test_network(config, net, model_ckpt=MODEL_CKPT, val_fold=VAL_FOLD, test_fold=TEST_FOLD)
 
 if __name__ == '__main__':
-    inval_fold, intest_fold = list(permutations(range(1,6), 2))[args.split]
+    assert args.split != -1, 'You shild specify which fold to test'
+    inval_fold, intest_fold = list(permutations(range(1, 4 + 1), 2))[args.split] # num_folds = 4
     print("*************************************")
     print("Testing model with Val Fold = {}, Test Fold = {}".format(inval_fold, intest_fold))
 

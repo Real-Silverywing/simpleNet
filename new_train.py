@@ -177,6 +177,17 @@ def train(net, optimizer, loss, train_loader, freeze_bn=False):
     retain_graph = True
     count = 0
 
+    # calculate weight
+
+    # lb = []
+    # for data in train_loader:
+    #     lb.append(data[1].item())
+    # c1 = lb.count(1)
+    # c0 = lb.count(0.0)
+    class_weights = get_weights_inverse_num_of_samples(2, [8, 30], power = 1)
+
+
+
     for i, data in enumerate(train_loader):
         # data = next(iter(train_loader))       # Never do this
 
@@ -225,10 +236,19 @@ def train(net, optimizer, loss, train_loader, freeze_bn=False):
             # tloss = attn_loss
         else:
             if config.num_classes == 1:
-                # print("DEBUG label_preds.shape: ", label_preds.shape)
-                # print("DEBUG labels.shape: ", labels.shape)
-                tloss = loss(label_preds, labels.unsqueeze(1))
+                if config.weighted_bce:
+                    # weightd loss
+                    if labels.item() == 0:
+                        tloss = class_weights[0] * loss(label_preds, labels.unsqueeze(1))
+                    elif labels.item() == 1:
+                        tloss = class_weights[1] * loss(label_preds, labels.unsqueeze(1))
+
+
+                else:
+                    # one-class without weight
+                    tloss = loss(label_preds, labels.unsqueeze(1))
             else:
+                # multi class
                 labels_one_hot = torch.zeros_like(label_preds)
                 for i in range(labels.shape[0]):
                     labels_one_hot[i, labels[i].long()] = 1
@@ -576,6 +596,16 @@ def train_network(net, model_ckpt, fold=0, val_fold=4, test_fold=5):
             termout=args.print,
         )
 
+def get_weights_inverse_num_of_samples(no_of_classes, samples_per_cls, power = 1):
+    weights_for_samples = 1.0 / np.array(np.power(samples_per_cls, power))
+    weights_for_samples = weights_for_samples / np.sum(weights_for_samples) * no_of_classes
+    return weights_for_samples
+
+def get_weights_effective_num_of_samples(no_of_classes, beta, samples_per_cls):
+    effective_num = 1.0 - np.power(beta, samples_per_cls)
+    weights_for_samples = (1.0 - beta) / np.array(effective_num)
+    weights_for_samples = weights_for_samples / np.sum(weights_for_samples) * no_of_classes
+    return weights_for_samples
 
 def main_train(val_fold=num_folds + 1, test_fold=num_folds):
 
