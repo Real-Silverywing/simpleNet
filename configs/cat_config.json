@@ -1,5 +1,5 @@
 {   
-    "exp_name": "simplenet_full_multi",
+    "exp_name": "cataract_resnet18_full",
     "model_name": "simplenet",
     "num_classes": 1,
     "trajectory": false,
@@ -7,12 +7,12 @@
     "focal_gamma": 2,
     "reduce_lr_plateau": true,
     "lr_scale": 0.1,
-    "lr_patience": 30,
-    "es_patience":80,
+    "lr_patience": 128,
+    "es_patience":20,
     "drop_rate": 0,
     "batch_size": 1,
-    "epochs": 200,
-    "imsize": 224,
+    "epochs": 500,
+    "imsize": 256,
     "clip_size": 256,
     "nclips": 1,
     "step_size": 4,
@@ -20,6 +20,6 @@
     "fp16": false,
     "cosine_annealing": false,
     "num_workers": 4,
-    "dataloader":"cv2dataloader",
+    "dataloader":"cat_kpdataloader",
     "desc": "tempspatattnnet net with global54"
 }

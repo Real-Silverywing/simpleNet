@@ -2,7 +2,7 @@
 import os
 from utils.process_config import process_config
 #models=['13','17','18','19', '23', '24','28','34']
-config_path = '/projects/colonoscopy/group_scratch/xzhou86/simpleNet/configs/config_18wl_newimg.json'
+config_path = '/projects/colonoscopy/group_scratch/xzhou86/simpleNet/configs/config_cnn_resample_weight.json'
 
 
 config = process_config(config_path)

@@ -1,14 +1,14 @@
 {   
-    "exp_name": "simplenet_full_multi",
-    "model_name": "simplenet",
+    "exp_name": "simplenet_resnet18_focal",
+    "model_name": "simplenet_resnet18",
     "num_classes": 1,
     "trajectory": false,
     "lr": 1e-3,
     "focal_gamma": 2,
     "reduce_lr_plateau": true,
     "lr_scale": 0.1,
-    "lr_patience": 30,
-    "es_patience":80,
+    "lr_patience": 50,
+    "es_patience":150,
     "drop_rate": 0,
     "batch_size": 1,
     "epochs": 200,
@@ -21,5 +21,6 @@
     "cosine_annealing": false,
     "num_workers": 4,
     "dataloader":"cv2dataloader",
-    "desc": "tempspatattnnet net with global54"
+    "desc": "simplenet with resnet18-focal_loss",
+    "weighted_bce": false
 }
